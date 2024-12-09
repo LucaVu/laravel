@@ -1,6 +1,6 @@
 @extends('admin.master')
 
-@section('module', 'Category')
+@section('module', 'Product')
 @section('action', 'List')
 
 @push('css')
@@ -66,17 +66,31 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach($products as $product)
                 <tr>
-                    <td>1</td>
-                    <td>Product 01</td>
-                    <td>10.000.000 VND</td>
-                    <td>Category 01</td>
-                    <td><span class="right badge badge-success">Show</span></td>
-                    <td><span class="right badge badge-danger">Featured</span></td>
-                    <td>26/09/2023 - 15:10</td>
-                    <td><a href="">Edit</a></td>
-                    <td><a href="">Delete</a></td>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $product->name }}</td>
+                    <td>{{ number_format($product->price, 0, "", ".") }} VND</td>
+                    <td>{{ $product->category->name }}</td>
+                    <td>
+                        @if($product->status == 1)
+                            <span class="right badge badge-success">Show</span>
+                        @else
+                            <span class="right badge badge-dark">Hidden</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($product->featured == 1)
+                            <span class="right badge badge-info">UnFeatured</span>
+                        @else
+                            <span class="right badge badge-danger">Featured</span>
+                        @endif
+                    </td>
+                    <td>{{ date('d/m/Y - H:m:i', strtotime($product->created_at)) }}</td>
+                    <td><a href="{{ route('admin.product.edit', ['id' => $product->id]) }}">Edit</a></td>
+                    <td><a onClick="return confirmDelete('product')" href="{{ route('admin.product.destroy', ['id' => $product->id]) }}">Delete</a></td>
                 </tr>
+                @endforeach
             </tbody>
             <tfoot>
                 <tr>

@@ -16,7 +16,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('admin.modules.product.index');
+        $products = Product::with('category')->orderBy('created_at', 'DESC')->get();
+
+        return view('admin.modules.product.index', [
+            'products' => $products
+        ]);
     }
 
     /**
@@ -49,10 +53,12 @@ class ProductController extends Controller
         $product->status = $request->status;
         $product->featured = $request->featured;
         $product->image = $fileName;
+        $product->user_id = 1;
 
         $product->save();
 
         $file->move(public_path('images/'), $fileName);
+        return redirect()->route('admin.product.index')->with('success', 'Create product successfully');
     }
 
     /**
